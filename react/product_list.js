@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 
 function ProductList() {
   const [products, setProducts] = useState([]);
-  const [filter, setFilter] = useState('all');
+  const [cart, setCart] = useState([]);
 
   useEffect(() => {
     fetch('https://api.example.com/products')
@@ -13,38 +13,21 @@ function ProductList() {
       .catch(err => console.error(err));
   }, []);
 
-  const handleFilterChange = (event) => {
-    setFilter(event.target.value);
+  const handleAddToCart = (product) => {
+    setCart(prevCart => [...prevCart, product]);
   };
-
-  const filteredProducts = products.filter((product) => {
-    if (filter === 'all') {
-      return true;
-    } else if (filter === 'under-10') {
-      return product.price < 10;
-    } else if (filter === '10-to-50') {
-      return product.price >= 10 && product.price <= 50;
-    } else if (filter === 'over-50') {
-      return product.price > 50;
-    }
-  });
 
   return (
     <div>
       <h1>Product List</h1>
-      <label htmlFor="filter">Filter by Price:</label>
-      <select id="filter" value={filter} onChange={handleFilterChange}>
-        <option value="all">All</option>
-        <option value="under-10">Under $10</option>
-        <option value="10-to-50">$10 to $50</option>
-        <option value="over-50">Over $50</option>
-      </select>
+      <p>Items in cart: {cart.length}</p>
       <ul>
-        {filteredProducts.map((product) => (
+        {products.map((product) => (
           <li key={product.id}>
             <h2>{product.name}</h2>
             <p>Price: ${product.price.toFixed(2)}</p>
             <img src={product.image} alt={product.name} />
+            <button onClick={() => handleAddToCart(product)}>Add to Cart</button>
           </li>
         ))}
       </ul>
@@ -53,3 +36,4 @@ function ProductList() {
 }
 
 export default ProductList;
+
